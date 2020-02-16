@@ -9,8 +9,8 @@ def open_word_list(text_file):
     from the text file.
     """
     global names, word_list
-    print("\n=========== WORD GAME STARTED ==========")
-    print("Reading Word List...Done!")
+    print("\n=========== WORD GAME STARTED ==========\n")
+    print("Reading Word List...Done!\n")
     try:
         word_list = open(text_file)
         names = word_list.read().split('\n')
@@ -40,30 +40,44 @@ def display_to_string(one_word):
     return s_word[:-1]
 
 
-def get_input():
-    char = input("Enter a Character: ")
-    return char
+def trials_of_guess(guess, word, trials, blank_name):
+    if guess not in word:
+        for trial in range(trials-1, 0, -1):
+            guess = input("Incorrect! You have " + str(trial) + " more chance :)\n")
+            if guess in word:
+                break
+        print("Game Over \nYou Loose :(")
+    else:
+        while "_" in blank_name:
+            print("Correct :)\n")
+            index_of_guessed = word.find(guess)
+            blank_name[index_of_guessed] = word[index_of_guessed]
+            print(display_to_string(blank_name))
+            guess = input("Enter Another Guess to continue:\n")
+            if guess not in word:
+                for trial in range(trials - 1, 0, -1):
+                    guess = input("Incorrect! You have " + str(trial) + " more chance :)\n")
+                    if guess in word:
+                        break
+                print("Game Over \nYou Loose :(")
+            else:
+                pass
+    #print("You Win")
 
 
 def start_game():
+    trials = 3
     word = name_chooser(open_word_list(word_doc))
-    print("\nI am thinking of a {} letter name".format(len(word)))
+    print("\nI am thinking of a {} letter name\n".format(len(word)))
     blank_name = ("_ " * len(word)).split(' ')
     random_index = random.randint(0, len(word) - 1)
     blank_name[random_index] = word[random_index]
     print(display_to_string(blank_name))
-    print("Fill in Black Spaces in the mysterious name")
-    for times in range(len(word)):
-        for i in range(4):
-            char = get_input()
-            if char in word:
-                print('Correct :)')
-                char_index = word.find(char)
-                blank_name[char_index] = char
-                display_to_string(blank_name)
-            else:
-                print("Incorrect :(")
-                print("You have {} more chances".format(i))
-            break
+    guess = input("Input guess of a letter in the word :)\n")
+    trials_of_guess(guess, word, trials, blank_name)
+
+
+
+
 
 start_game()
